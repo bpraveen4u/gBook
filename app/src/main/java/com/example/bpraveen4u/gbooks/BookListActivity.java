@@ -1,5 +1,6 @@
 package com.example.bpraveen4u.gbooks;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -30,15 +31,26 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         setContentView(R.layout.activity_book_list);
         mLoadingProgress = (ProgressBar) findViewById(R.id.pb_loading);
         rvBooks = (RecyclerView) findViewById(R.id.rv_books);
-        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
-        rvBooks.setLayoutManager(booksLayoutManager);
+
+        Intent intent = getIntent();
+        String query = intent.getStringExtra("Query");
+        URL bookUrl;
         try {
-            URL bookUrl = ApiUtil.buildUrl("android");
+            if (query == null || query.isEmpty()){
+                bookUrl = ApiUtil.buildUrl("android");
+            }
+            else{
+                bookUrl = new URL(query);
+            }
+
             new BooksQueryTask().execute(bookUrl);
         }
         catch (Exception e){
             Log.d("Error", e.getMessage());
         }
+        LinearLayoutManager booksLayoutManager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        rvBooks.setLayoutManager(booksLayoutManager);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -67,14 +79,21 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+        switch(item.getItemId()){
+            case R.id.action_advanced_search:
+                Intent intent = new Intent(this, SearchActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
 
         //noinspection SimplifiableIfStatement
         //if (id == R.id.action_settings) {
         //    return true;
         //}
 
-        return super.onOptionsItemSelected(item);
+
     }
 
     @Override
@@ -121,17 +140,18 @@ public class BookListActivity extends AppCompatActivity implements SearchView.On
             else{
                 rvBooks.setVisibility(View.VISIBLE);
                 tvError.setVisibility(View.INVISIBLE);
-            }
-            //tvResult.setText(result);
-            ArrayList<Book> books = ApiUtil.getBooksFromJson(result);
-            String resultString = "";
+                //tvResult.setText(result);
+                ArrayList<Book> books = ApiUtil.getBooksFromJson(result);
+                String resultString = "";
             /*for(Book book: books){
                 resultString = resultString + book.title + "\n" + book.publishedDate + "\n\n";
             }
             tvResult.setText(resultString);
             */
-            BooksAdapter adapter = new BooksAdapter(books);
-            rvBooks.setAdapter(adapter);
+                BooksAdapter adapter = new BooksAdapter(books);
+                rvBooks.setAdapter(adapter);
+            }
+
         }
 
         @Override
