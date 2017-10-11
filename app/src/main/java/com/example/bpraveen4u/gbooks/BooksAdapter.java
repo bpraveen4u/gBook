@@ -2,6 +2,7 @@ package com.example.bpraveen4u.gbooks;
 
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,7 +36,7 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHold
         return books.size();
     }
 
-    public class BookViewHolder extends RecyclerView.ViewHolder{
+    public class BookViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView tvTitle;
         TextView tvAuthors;
@@ -49,22 +50,23 @@ public class BooksAdapter extends RecyclerView.Adapter<BooksAdapter.BookViewHold
             tvAuthors = (TextView) itemView.findViewById(R.id.tvAuthors);
             tvDate = (TextView) itemView.findViewById(R.id.tvPublishDate);
             tvPublisher = (TextView) itemView.findViewById(R.id.tvPublisher);
+            itemView.setOnClickListener(this);
         }
 
         public void bind(Book book){
             tvTitle.setText(book.title);
-            String authors = "";
-            int i =0;
-            for(String author: book.authors){
-                authors+=author;
-                i++;
-                if (i<book.authors.length){
-                    authors+=", ";
-                }
-            }
-            tvAuthors.setText(authors);
+            tvAuthors.setText(book.authors);
             tvDate.setText(book.publishedDate);
             tvPublisher.setText(book.publisher);
+        }
+
+        @Override
+        public void onClick(View v) {
+            int position = getAdapterPosition();
+            Book selectedBook = books.get(position);
+            Intent intent = new Intent(v.getContext(), BookDetail.class);
+            intent.putExtra("Book", selectedBook);
+            v.getContext().startActivity(intent);
         }
     }
 }
