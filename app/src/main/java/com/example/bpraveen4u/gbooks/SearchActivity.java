@@ -1,5 +1,6 @@
 package com.example.bpraveen4u.gbooks;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -37,8 +38,20 @@ public class SearchActivity extends AppCompatActivity {
                 }
                 else {
                     URL urlString = ApiUtil.buildUrl(title, author, publisher, isbn);
+                    //sharedPreferences
+                    Context context = getApplicationContext();
+                    int position = SpUtil.getPreferenceInt(context, SpUtil.POSITION);
+                    if(position == 0 || position ==5){
+                        position = 1;
+                    }else{
+                        position++;
+                    }
+                    String key = SpUtil.POSITION + String.valueOf(position);
+                    String value = title+","+author+","+publisher+","+isbn;
+                    SpUtil.setPreferenceString(context, key, value);
+                    SpUtil.setPreferenceInt(context, SpUtil.POSITION, position);
                     Intent intent = new Intent(getApplicationContext(), BookListActivity.class);
-                    intent.putExtra("Query", urlString);
+                    intent.putExtra("Query", urlString.toString());
                     startActivity(intent);
                 }
 

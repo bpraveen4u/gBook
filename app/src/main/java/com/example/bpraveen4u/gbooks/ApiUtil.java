@@ -25,7 +25,7 @@ public class ApiUtil {
     public static final String API_KEY = "AIzaSyCw3YRjIW2Jyg1pLa_lcMmyfBTRn4XmX9I";
     public static final String TITLE = "intitle:";
     public static final String AUTHOR = "inauthor:";
-    public static final String PUBLISHER = "inublisher:";
+    public static final String PUBLISHER = "inpublisher:";
     public static final String ISBN = "isbn:";
 
     public static URL buildUrl(String title){
